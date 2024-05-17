@@ -33,6 +33,8 @@ public class Main {
         try (BufferedReader reader = new BufferedReader(fileReader);) {
             String line;
             while ((line = reader.readLine()) != null) {
+                if (line.length()>1024)
+                    throw new RuntimeException("Длина строки превышает 1024 символа");
                 countLine++;
                 //line.length() > maxLenLine ? maxLenLine = line.length() : (line.length() < minLenLine ? minLenLine = line.length());
                 if (line.length() > maxLenLine) maxLenLine = line.length();
