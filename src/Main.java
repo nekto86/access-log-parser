@@ -1,30 +1,20 @@
-import java.io.File;
+import java.io.*;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-      /*  System.out.println("Введите первое число");
-        int firstNumber = new Scanner(System.in).nextInt();
-        System.out.println("Введите второе число");
-        int secondNumber = new Scanner(System.in).nextInt();
-        System.out.println("Вы ввели: " + firstNumber + " и " + secondNumber + "\n" +
- "Их сумма: " + (firstNumber+secondNumber) + "\n" +
-                "Их разность: " + (firstNumber - secondNumber)  + "\n" +
-                "Их произведение: " + firstNumber * secondNumber + "\n" +
-                "Их частное: " + (double)firstNumber/secondNumber);
-
-                */
         boolean isFileExist, isDirectory;
         int count = 0;
+        String path;
         while (true) {
-            String path = new Scanner(System.in).nextLine();
+            path = new Scanner(System.in).nextLine();
             File file = new File(path);
             isFileExist = file.exists();
             isDirectory = file.isDirectory();
-            if (isFileExist && !isDirectory){
+            if (isFileExist && !isDirectory) {
                 count++;
                 System.out.println("Путь указан верно\nЭто " + count + " верно указанный файл");
-                continue;
+                break;
             }
             if (isFileExist) {
                 System.out.println("Указан путь не к файлу, а к папке\nПерепроверьте и попробуйте ещё раз");
@@ -32,5 +22,32 @@ public class Main {
             }
             System.out.println("Указанный путь не существует\nПерепроверьте и попробуйте ещё раз");
         }
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        int countLine = 0, maxLenLine = Integer.MIN_VALUE, minLenLine = Integer.MAX_VALUE, tmp = 0;
+
+        try (BufferedReader reader = new BufferedReader(fileReader);) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.length()>1024)
+                    throw new RuntimeException("Длина строки превышает 1024 символа");
+                countLine++;
+                //line.length() > maxLenLine ? maxLenLine = line.length() : (line.length() < minLenLine ? minLenLine = line.length());
+                if (line.length() > maxLenLine) maxLenLine = line.length();
+                else if (line.length() < minLenLine) minLenLine = line.length();
+                int length = line.length();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            System.out.println("В файле всего " + countLine + " строк\nДлина самой длинной строки: " + maxLenLine + " символов\nДлина самой короткой строки: " + minLenLine);
+        }
+        // Scanner sc = new Scanner()
+
     }
 }
