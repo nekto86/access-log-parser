@@ -42,17 +42,26 @@ public class Main {
             e.printStackTrace();
         }
 
-        logLine[] LogLines = new logLine[countLines+1]; //Создаю массив объектов logLine, где logLine - объект, содержащий элементы парсинга логов
+        logLine[] LogLines = new logLine[countLines + 1]; //Создаю массив объектов logLine, где logLine - объект, содержащий элементы парсинга логов
         //BufferedReader reader = new BufferedReader(fileReader);
         File file = new File(path);
         Scanner sc = new Scanner(file);
-        String[] result;
+        String[] result = null;
         for (int i = 0; i < countLines; i++) {
             result = parseLine(sc.nextLine());
-            LogLines[i] = new logLine(result[0],result[1],result[2],result[3],result[4],result[5],result[6]);
-            System.out.println(LogLines[i]);
+            LogLines[i] = new logLine(result[0], result[1], result[2], result[3], result[4], result[5], result[6]);
+            //System.out.println(LogLines[i]);
         }
 
+        whatBot(LogLines[176124]);
+
+        int countYandexBot = 0, countGoogleBot = 0;
+        for (int i = 0; i < LogLines.length - 1; i++) {
+
+            if (whatBot(LogLines[i]) == 1) countYandexBot++;
+            else if (whatBot(LogLines[i]) == 2) countGoogleBot++;
+        }
+        System.out.println("Всего было выполнено: " + countLines + " запросов, из них " + countYandexBot + " к Яндекс боту и " + countGoogleBot + " к Гугл боту");
 
     }
 
@@ -74,4 +83,27 @@ public class Main {
 
         return result;
     }
+    /*public static int whatBot(logLine line) {                   //Метод который вычленяет название бота из объекта строки лога
+        String[] UserAgent = line.getUserAgent().split(";");                 //Разбиваем на части строку
+        String bot="";
+        if (UserAgent.length > 1) {                                 //Т.к. у нас есть ситуация, когда заместо значения у нас прочерк, надо выполнить проверку, а точно ли объект подходящий для нас
+            bot = UserAgent[1];
+        } else return 0;
+        UserAgent = bot.split("[\\/ ]");         //Переиспользуем массив UserAgent для разбивки блока с указанием названия бота, чтобы выкинуть всё то, что идёт после слеша, не забываем про экранирование
+        if (UserAgent.length > 1) bot = UserAgent[1];         //Переиспользуем переменную, теперь в ней хранится название бота
+        if (bot.equals("YandexBot")) return 1;
+        else if (bot.equals("Googlebot")) return 2;
+        return 0;
+    }*/   //Метод по подсчёту ботов в решении, которое описано в задании (не работает, т.к. в логах есть витеиватые User-Agent
+
+    public static int whatBot(logLine line) {                   //Метод который вычленяет название бота из объекта строки лога
+        if (line.getUserAgent().length() < 5) return 0;             //Если нам пришла пустая строка/с пробелом/дефисом, да чёрт знаем каким ещё прочерком
+        String bot = line.getUserAgent();                       //Забираем User-Agent
+        if (bot.contains("YandexBot")) return 1;            //Ищем необходимое значение
+        if (bot.contains("Googlebot")) return 2;
+        return 0;
+    }
 }
+
+
+
